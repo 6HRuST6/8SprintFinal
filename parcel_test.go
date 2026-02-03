@@ -159,7 +159,7 @@ func TestGetByClient(t *testing.T) {
 	// get by client
 	storedParcels, err := store.GetByClient(client)
 	require.NoError(t, err)
-	assert.Equal(t, 3, len(storedParcels))
+	assert.Len(t, storedParcels, 3)
 	// получите список посылок по идентификатору клиента, сохранённого в переменной client
 	// убедитесь в отсутствии ошибки
 	// убедитесь, что количество полученных посылок совпадает с количеством добавленных
@@ -170,10 +170,8 @@ func TestGetByClient(t *testing.T) {
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
 		// убедитесь, что значения полей полученных посылок заполнены верно
 		expected, ok := parcelMap[parcel.Number]
-		require.True(t, ok, "parcel with number %d not found in parcelMap", parcel.Number)
-		assert.Equal(t, expected.Client, parcel.Client)
-		assert.Equal(t, expected.Status, parcel.Status)
-		assert.Equal(t, expected.Address, parcel.Address)
-		assert.Equal(t, expected.CreatedAt, parcel.CreatedAt)
+		assert.True(t, ok, "parcel with number %d not found in parcelMap", parcel.Number)
+		assert.Equal(t, expected, parcel)
+
 	}
 }
