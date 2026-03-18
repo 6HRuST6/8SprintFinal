@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -98,8 +99,13 @@ func (s ParcelService) Delete(number int) error {
 
 func main() {
 	// настройте подключение к БД
+	db, err := sql.Open("sqlite", "tracker.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
-	store := // создайте объект ParcelStore функцией NewParcelStore
+	store := NewParcelStore(db) // создайте объект ParcelStore функцией NewParcelStore
 	service := NewParcelService(store)
 
 	// регистрация посылки
@@ -136,10 +142,13 @@ func main() {
 	// попытка удаления отправленной посылки
 	err = service.Delete(p.Number)
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Printf("Не удалось удалить посылку №%d : %v\n", p.Number, err)
+		//return
+		// данный return пришлось убрать так как при ошибке программа
+		// останавливалась на данном этапе
+	} else {
+		fmt.Printf("Посылка № %d удалена\n", p.Number)
 	}
-
 	// вывод посылок клиента
 	// предыдущая посылка не должна удалиться, т.к. её статус НЕ «зарегистрирована»
 	err = service.PrintClientParcels(client)
@@ -158,8 +167,10 @@ func main() {
 	// удаление новой посылки
 	err = service.Delete(p.Number)
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Printf("Не удалось удалить посылку №%d : %v\n", p.Number, err)
+		//return
+	} else {
+		fmt.Printf("Посылка № %d удалена\n", p.Number)
 	}
 
 	// вывод посылок клиента
