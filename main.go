@@ -180,35 +180,4 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	// Данный код использовался для тестированния main.go
-	fmt.Println("Очистка посылок клиента 1...")
-
-	parcels, err := service.store.GetByClient(client)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	for _, parcel := range parcels {
-		if parcel.Status != ParcelStatusRegistered {
-			err := service.store.SetStatus(parcel.Number, ParcelStatusRegistered)
-			if err != nil {
-				fmt.Printf("Не удалось сменить статус у посылки № %d: %v\n", parcel.Number, err)
-				continue
-			}
-			fmt.Printf("Статус посылки № %d изменён на registered\n", parcel.Number)
-		}
-
-		for _, parcel := range parcels {
-			err := service.Delete(parcel.Number)
-			if err != nil {
-				fmt.Printf("Посылка № %d не удалена (%s)\n", parcel.Number, err)
-			} else {
-				fmt.Printf("Посылка № %d удалена\n", parcel.Number)
-			}
-		}
-
-	}
-	fmt.Println("Очистка завершена")
-
 }
